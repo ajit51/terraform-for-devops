@@ -49,15 +49,16 @@ resource "aws_security_group" "allow_user_to_connect" {
 }
 
 resource "aws_instance" "my_instance" {
-  ami             = "ami-02b8269d5e85954ef"
-  instance_type   = "t3.micro"
+  ami             = var.ec2_ami_id
+  instance_type   = var.ec2_instance_type
   key_name        = aws_key_pair.deployer.key_name
   security_groups = [aws_security_group.allow_user_to_connect.name]
+  user_data       = file("install_nginx.sh")
   tags = {
     Name = "Terra-Automate"
   }
   root_block_device {
-    volume_size = 10
+    volume_size = var.ec2_root_storage_size
     volume_type = "gp3"
   }
   connection {
